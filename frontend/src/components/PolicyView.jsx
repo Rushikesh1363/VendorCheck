@@ -53,22 +53,38 @@ const COMPLIANCE_RULES = [
 
   // Category 2: Tax & Jurisdiction
   {
-    key: 'in-pan',
-    name: 'India PAN Format & Entity-Type Check',
+    key: 'in-pan-format',
+    name: 'India PAN Format Validation',
+    category: 'Tax & Jurisdiction',
+    checks: 'Validates the 10-character alphanumeric PAN structure.',
+    severity: 'Moderate',
+    outcome: 'Pending',
+  },
+  {
+    key: 'in-pan-entity',
+    name: 'India PAN Entity-Type Match',
     category: 'Tax & Jurisdiction',
     checks:
-      'Validates the 10-character alphanumeric PAN format and matches the 4th letter against entity constitution (C for Company, P for Proprietorship, F for LLP). Submitting a Personal (P) PAN for a Private Limited company triggers a critical block.',
-    severity: 'Critical / Moderate',
-    outcome: 'Rejected / Pending',
+      'Matches the 4th character of the PAN against entity constitution (C for Company, P for Proprietorship, F for LLP). Submitting a Personal (P) PAN for a Private Limited company triggers a critical block.',
+    severity: 'Critical',
+    outcome: 'Rejected',
+  },
+  {
+    key: 'in-gstin-format',
+    name: 'India GSTIN Format Validation',
+    category: 'Tax & Jurisdiction',
+    checks: 'Validates the 15-character alphanumeric GSTIN structure.',
+    severity: 'Moderate',
+    outcome: 'Pending',
   },
   {
     key: 'in-gstin-pan',
-    name: 'India GSTIN Format & Embedded PAN Link',
+    name: 'India GSTIN Embedded PAN Match',
     category: 'Tax & Jurisdiction',
     checks:
-      'Validates the 15-character GSTIN format and verifies characters 3 through 12 match the submitted 10-character PAN. An embedded PAN mismatch triggers a critical block.',
-    severity: 'Critical / Moderate',
-    outcome: 'Rejected / Pending',
+      'Verifies characters 3 through 12 of the GSTIN match the submitted 10-character PAN. A mismatch triggers a critical block.',
+    severity: 'Critical',
+    outcome: 'Rejected',
   },
   {
     key: 'in-gstin-state',
@@ -194,13 +210,6 @@ function SeverityBadge({ severity }) {
       </span>
     )
   }
-  if (severity === 'Critical / Moderate') {
-    return (
-      <span className="inline-flex items-center rounded-full bg-rose-50 px-2.5 py-0.5 text-[11px] font-medium text-rose-700 whitespace-nowrap ring-1 ring-rose-200/80">
-        Critical / Moderate
-      </span>
-    )
-  }
   return (
     <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800">
       Moderate
@@ -213,19 +222,6 @@ function OutcomeBadge({ outcome }) {
     return (
       <span className="inline-flex items-center rounded-full bg-rose-600 px-2.5 py-0.5 text-[11px] font-semibold text-white">
         Rejected
-      </span>
-    )
-  }
-  if (outcome === 'Rejected / Pending') {
-    return (
-      <span className="inline-flex items-center gap-1 whitespace-nowrap">
-        <span className="rounded-full bg-rose-600 px-2 py-0.5 text-[11px] font-semibold text-white">
-          Rejected
-        </span>
-        <span className="text-slate-400 text-[11px]">/</span>
-        <span className="rounded-full bg-amber-500 px-2 py-0.5 text-[11px] font-semibold text-white">
-          Pending
-        </span>
       </span>
     )
   }
