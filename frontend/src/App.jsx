@@ -2,12 +2,11 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   ShieldCheck,
   BookOpen,
-  Activity,
+  Home,
   LayoutDashboard,
   Sparkles,
   AlertCircle,
   Loader2,
-  Cpu,
 } from 'lucide-react'
 import {
   clearAllSubmissions,
@@ -54,8 +53,15 @@ const INITIAL_STAGES = {
   4: { state: 'idle', data: null },
 }
 
+function getTabFromHash() {
+  const hash = (window.location.hash || '').replace(/^#\/?/, '').toLowerCase()
+  if (hash === 'dashboard') return 'dashboard'
+  if (hash === 'policy') return 'policy'
+  return 'home'
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState('live')
+  const [activeTab, setActiveTab] = useState(getTabFromHash)
   const [health, setHealth] = useState(null)
   const [previewDoc, setPreviewDoc] = useState(null)
 
@@ -168,6 +174,18 @@ export default function App() {
     refreshDashboard()
   }, [refreshDashboard])
 
+  useEffect(() => {
+    const onHashChange = () => {
+      const next = getTabFromHash()
+      setActiveTab(next)
+      if (next === 'dashboard') {
+        refreshDashboard()
+      }
+    }
+    window.addEventListener('hashchange', onHashChange)
+    return () => window.removeEventListener('hashchange', onHashChange)
+  }, [refreshDashboard])
+
   const handleFormChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }))
   }
@@ -208,7 +226,10 @@ export default function App() {
   const handleGoHome = () => {
     clearPipelineTimers()
     setPreviewDoc(null)
-    setActiveTab('live')
+    setActiveTab('home')
+    if (window.location.hash !== '#home') {
+      window.location.hash = 'home'
+    }
     setStageStates(INITIAL_STAGES)
     setCurrentResult(null)
     setErrorMsg(null)
@@ -219,6 +240,20 @@ export default function App() {
       loadPresetIntoForm(happyPath)
     }
     window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleSelectTab = (tab) => {
+    if (tab === 'home') {
+      handleGoHome()
+      return
+    }
+    setActiveTab(tab)
+    if (window.location.hash !== `#${tab}`) {
+      window.location.hash = tab
+    }
+    if (tab === 'dashboard') {
+      refreshDashboard()
+    }
   }
 
   const handleRunPipeline = async () => {
@@ -388,22 +423,22 @@ export default function App() {
       {/* Executive Header */}
       <header className="sticky top-0 z-30 border-b border-slate-200 bg-white/95 backdrop-blur">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between gap-4">
+          <div className="flex min-h-[76px] py-4 items-center justify-between gap-4">
             {/* Brand */}
             <button
               type="button"
               onClick={handleGoHome}
               title="Go to Home"
-              className="flex items-center gap-2.5 min-w-0 text-left group focus:outline-none cursor-pointer"
+              className="flex items-center gap-3 min-w-0 text-left group focus:outline-none cursor-pointer"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-slate-900 text-white shadow-sm group-hover:opacity-90 group-active:scale-95 transition">
-                <ShieldCheck className="h-5 w-5" />
+              <div className="flex w-11 h-11 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-600 to-slate-900 text-white shadow-sm group-hover:opacity-90 group-active:scale-95 transition">
+                <ShieldCheck className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex flex-col justify-center">
-                <h1 className="text-lg font-bold tracking-tight text-slate-900 leading-tight truncate group-hover:text-indigo-700 transition">
+                <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 leading-tight truncate group-hover:text-indigo-700 transition">
                   Vendorcheck
                 </h1>
-                <p className="text-[11px] font-medium text-slate-500 leading-tight truncate">
+                <p className="text-xs sm:text-sm font-medium text-slate-500 leading-snug truncate">
                   Automated Vendor Onboarding &amp; Verification
                 </p>
               </div>
@@ -411,47 +446,44 @@ export default function App() {
 
             {/* Navigation Tabs */}
             <div className="flex items-center gap-2 shrink-0">
-              <nav className="flex items-center rounded-xl bg-slate-100 p-1">
+              <nav className="flex items-center rounded-xl bg-slate-100 p-1.5">
                 <button
                   type="button"
-                  onClick={() => setActiveTab('live')}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
-                    activeTab === 'live'
+                  onClick={() => handleSelectTab('home')}
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition cursor-pointer ${
+                    activeTab === 'home'
                       ? 'bg-white text-slate-900 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <Activity className="h-3.5 w-3.5 text-indigo-600" />
-                  Live Onboarding Run
+                  <Home className="w-[18px] h-[18px] text-indigo-600 shrink-0" />
+                  Home
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    setActiveTab('dashboard')
-                    refreshDashboard()
-                  }}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                  onClick={() => handleSelectTab('dashboard')}
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition cursor-pointer ${
                     activeTab === 'dashboard'
                       ? 'bg-white text-slate-900 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <LayoutDashboard className="h-3.5 w-3.5 text-indigo-600" />
+                  <LayoutDashboard className="w-[18px] h-[18px] text-indigo-600 shrink-0" />
                   Audit Dashboard
-                  <span className="ml-0.5 rounded-full bg-indigo-100 px-1.5 py-0.2 text-[10px] font-extrabold text-indigo-700">
+                  <span className="ml-0.5 rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-bold text-indigo-700">
                     {kpis.total}
                   </span>
                 </button>
                 <button
                   type="button"
-                  onClick={() => setActiveTab('policy')}
-                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                  onClick={() => handleSelectTab('policy')}
+                  className={`inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-semibold transition cursor-pointer ${
                     activeTab === 'policy'
                       ? 'bg-white text-slate-900 shadow-xs'
                       : 'text-slate-600 hover:text-slate-900'
                   }`}
                 >
-                  <BookOpen className="h-3.5 w-3.5 text-indigo-600" />
+                  <BookOpen className="w-[18px] h-[18px] text-indigo-600 shrink-0" />
                   <span className="hidden sm:inline">Policy &amp; Assumptions</span>
                   <span className="sm:hidden">Policy</span>
                 </button>
@@ -470,7 +502,7 @@ export default function App() {
           </div>
         )}
 
-        {activeTab === 'live' ? (
+        {activeTab === 'home' ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
             {/* Left Column: Vendor Submission Portal */}
             <div className="lg:col-span-5">
@@ -510,10 +542,10 @@ export default function App() {
                       </span>
                       <p>
                         <span className="font-semibold text-slate-900">
-                          Pick a test case on the left
+                          Choose a sample scenario
                         </span>{' '}
-                        — Click any Sample Scenario button to auto-fill the form (or enter your own
-                        vendor details &amp; PDFs).
+                        — Select any preset on the left to auto-fill the form, or manually enter
+                        vendor details and attach the compliance documents.
                       </p>
                     </div>
                     <div className="flex items-start gap-2.5">

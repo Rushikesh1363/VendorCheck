@@ -178,7 +178,7 @@ export default function AuditDashboard({
             </div>
             <h3 className="text-sm font-bold text-slate-900">No Audit Records Found</h3>
             <p className="mt-1 text-xs text-slate-500 max-w-md mx-auto">
-              Run any vendor onboarding scenario from the Live Onboarding Run tab to persist full
+              Run any vendor onboarding scenario from the Home tab to persist full
               compliance telemetry and inspect historical runs here.
             </p>
           </div>
