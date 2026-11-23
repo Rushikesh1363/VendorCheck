@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import {
   Check,
   CheckCircle2,
@@ -94,7 +94,7 @@ export const CHECKLIST_PHASES = [
 ]
 
 const FLAT_ITEMS = CHECKLIST_PHASES.flatMap((p) =>
-  p.items.map((item) => ({ ...item, phaseLabel: p.label }))
+  p.items.map((item) => ({ ...item, phaseId: p.id, phaseLabel: p.label }))
 )
 
 export function getActiveChecklistItem(elapsedSeconds) {
@@ -342,10 +342,32 @@ export default function PipelineStepper({
   elapsedSeconds = 0,
 }) {
   const finalStatusMap = useMemo(() => evaluateResultChecklist(result), [result])
-  const { index: activeIndex } = useMemo(
+  const { index: activeIndex, item: activeItem } = useMemo(
     () => getActiveChecklistItem(elapsedSeconds),
     [elapsedSeconds]
   )
+  const activePhaseId = isRunning ? activeItem?.phaseId ?? null : null
+  const stepRefs = useRef({})
+  const lastScrolledPhaseRef = useRef(null)
+
+  useEffect(() => {
+    if (!isRunning || !activePhaseId) {
+      lastScrolledPhaseRef.current = null
+      return
+    }
+    if (lastScrolledPhaseRef.current === activePhaseId) return
+    const prevPhase = lastScrolledPhaseRef.current
+    lastScrolledPhaseRef.current = activePhaseId
+
+    // Run trigger already scrolls cleanly to the Verification Progress header + Step 1.
+    // Smoothly keep each subsequent active step in view once per step transition.
+    if (!prevPhase && activePhaseId === 'step_1') return
+
+    const el = stepRefs.current[activePhaseId]
+    if (el && typeof el.scrollIntoView === 'function') {
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [isRunning, activePhaseId])
 
   const flatIndexById = useMemo(() => {
     const map = {}
@@ -557,7 +579,10 @@ export default function PipelineStepper({
           return (
             <div
               key={phase.id}
-              className={`flex gap-3 ${isLastPhase ? '' : 'pb-3.5'}`}
+              ref={(el) => {
+                stepRefs.current[phase.id] = el
+              }}
+              className={`flex gap-3 scroll-mt-24 ${isLastPhase ? '' : 'pb-3.5'}`}
             >
               {/* Left gutter: circular numbered badge + vertical connector line */}
               <div className="flex flex-col items-center shrink-0">

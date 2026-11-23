@@ -82,6 +82,8 @@ export default function App() {
   const stageAdvanceTimerRef = useRef(null)
   const receivedBackendEventRef = useRef(false)
   const resultsRef = useRef(null)
+  const verificationResultRef = useRef(null)
+  const lastScrolledResultIdRef = useRef(null)
 
   const clearPipelineTimers = useCallback(() => {
     if (elapsedTimerRef.current) {
@@ -97,6 +99,24 @@ export default function App() {
   useEffect(() => {
     return () => clearPipelineTimers()
   }, [clearPipelineTimers])
+
+  useEffect(() => {
+    const submissionId = currentResult?.submission_id
+    if (!submissionId) {
+      lastScrolledResultIdRef.current = null
+      return
+    }
+    if (lastScrolledResultIdRef.current === submissionId) return
+    lastScrolledResultIdRef.current = submissionId
+
+    const rafId = window.requestAnimationFrame(() => {
+      verificationResultRef.current?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    })
+    return () => window.cancelAnimationFrame(rafId)
+  }, [currentResult?.submission_id])
 
   // Audit Dashboard state
   const [submissions, setSubmissions] = useState([])
@@ -523,7 +543,7 @@ export default function App() {
             </div>
 
             {/* Right Column: Live Execution View */}
-            <div ref={resultsRef} className="lg:col-span-7 space-y-6 scroll-mt-20">
+            <div ref={resultsRef} className="lg:col-span-7 space-y-6 scroll-mt-24">
               {!isRunning && !currentResult ? (
                 <div className="rounded-2xl border border-indigo-200/80 border-t-4 border-t-indigo-600 bg-gradient-to-b from-indigo-50/60 to-white p-6 shadow-sm">
                   <div className="flex items-center gap-3.5">
@@ -616,12 +636,14 @@ export default function App() {
                   />
 
                   {currentResult ? (
-                    <ResultView
-                      result={currentResult}
-                      attachments={attachments}
-                      onSendEmail={handleSendEmail}
-                      onPreviewDoc={setPreviewDoc}
-                    />
+                    <div ref={verificationResultRef} className="scroll-mt-24">
+                      <ResultView
+                        result={currentResult}
+                        attachments={attachments}
+                        onSendEmail={handleSendEmail}
+                        onPreviewDoc={setPreviewDoc}
+                      />
+                    </div>
                   ) : isRunning ? (
                     (() => {
                       const activeStep = getActiveChecklistItem(elapsedSeconds)
