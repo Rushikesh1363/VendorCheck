@@ -386,6 +386,12 @@ export default function PolicyView({ health }) {
             Production Assumptions &amp; Next Steps
           </div>
           <ul className="space-y-3 text-xs text-slate-600 leading-relaxed flex-1">
+            <li className="rounded-xl bg-indigo-50/60 border border-indigo-100 px-3.5 py-2.5">
+              <span className="font-bold text-indigo-950 block mb-0.5">
+                Production Separation
+              </span>
+              In a live deployment, the Vendor Portal (left) is served as an external link/form to vendors, while the Verification Engine &amp; Audit Dashboard (right) are restricted to internal Procurement/AP teams. Both are shown side-by-side here as an end-to-end testing sandbox.
+            </li>
             <li className="rounded-xl bg-slate-50 px-3.5 py-2.5">
               <span className="font-bold text-slate-900 block mb-0.5">
                 Live External Registry &amp; Penny-Drop APIs
