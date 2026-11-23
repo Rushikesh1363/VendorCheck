@@ -464,17 +464,7 @@ export default function App() {
         {activeTab === 'live' ? (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
             {/* Left Column: Vendor Submission Portal */}
-            <div className="lg:col-span-5 space-y-3">
-              <div className="rounded-xl border border-indigo-200/70 bg-indigo-50/40 px-3.5 py-2.5">
-                <span className="inline-flex items-center rounded-full bg-indigo-100/90 border border-indigo-200/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-indigo-800">
-                  VENDOR PORTAL · SIMULATED INPUT
-                </span>
-                <p className="mt-1 text-[11px] text-slate-600 leading-snug">
-                  Represents the form &amp; documents submitted by the vendor (use a preset or
-                  upload custom PDFs to test).
-                </p>
-              </div>
-
+            <div className="lg:col-span-5">
               <SubmissionForm
                 presets={presets}
                 activePresetId={activePresetId}
@@ -492,17 +482,7 @@ export default function App() {
             </div>
 
             {/* Right Column: Live Execution View */}
-            <div ref={resultsRef} className="lg:col-span-7 space-y-4 scroll-mt-20">
-              <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/40 px-3.5 py-2.5">
-                <span className="inline-flex items-center rounded-full bg-emerald-100/90 border border-emerald-200/80 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-800">
-                  INTERNAL PROCUREMENT VIEW · ENGINE OUTPUT
-                </span>
-                <p className="mt-1 text-[11px] text-slate-600 leading-snug">
-                  Automated verification results, audit notes, and vendor follow-up draft visible
-                  only to internal Ops.
-                </p>
-              </div>
-
+            <div ref={resultsRef} className="lg:col-span-7 space-y-6 scroll-mt-20">
               {!isRunning && !currentResult ? (
                 <div className="rounded-2xl border border-indigo-200/80 border-t-4 border-t-indigo-600 bg-gradient-to-b from-indigo-50/60 to-white p-6 shadow-sm">
                   <div className="flex items-center gap-3.5">
