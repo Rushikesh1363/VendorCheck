@@ -14,8 +14,8 @@ from backend.schemas import (
     VendorFormInput,
 )
 
-# Current compliance reference date (matches system date 2026-11-20)
-REFERENCE_DATE = date(2026, 11, 20)
+# Current compliance reference date (matches system date 2026-11-23)
+REFERENCE_DATE = date(2026, 11, 23)
 
 INDIAN_STATE_CODES: dict[str, str] = {
     "01": "Jammu and Kashmir",
@@ -884,7 +884,7 @@ def run_deterministic_rules(
         )
 
     # =========================================================================
-    # RULE 4: DOCUMENT VALIDITY & EXPIRY (Ref Date: 2026-11-20)
+    # RULE 4: DOCUMENT VALIDITY & EXPIRY (Ref Date: 2026-11-23)
     # =========================================================================
     validity_issues: list[str] = []
     validity_found_parts: list[str] = []
@@ -930,7 +930,7 @@ def run_deterministic_rules(
                 message="; ".join(validity_issues) + ".",
                 remediation_hint=(
                     "Upload a renewed, currently valid certificate (e.g., renewed FY 2026-27 CA Turnover / "
-                    "Compliance Certificate or active Tax Registration valid beyond 2026-11-20)."
+                    f"Compliance Certificate or active Tax Registration valid beyond {REFERENCE_DATE.isoformat()})."
                 ),
             )
         )

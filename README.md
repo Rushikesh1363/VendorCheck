@@ -6,7 +6,7 @@ Full-stack vendor onboarding verification system built with **FastAPI**, **SQLit
 
 - **Stage 1 — Intake & Document Classification:** Validates PDF readability and classifies each attachment (`TAX_REGISTRATION`, `BANK_PROOF`, `COMPLIANCE_CERT`, or `WRONG_DOCUMENT`) via Gemini 3.5 Flash-Lite with automatic `pdfplumber` fallback.
 - **Stage 2 — Structured Entity & Field Extraction:** Extracts strict Pydantic JSON schemas from tax certificates, bank verification letters, and compliance certificates.
-- **Stage 3 — Deterministic Cross-Field & Jurisdiction Rule Engine:** Pure Python compliance checks covering completeness, multi-jurisdiction tax/routing formats (`IN`, `US`, `UK`, `AE`, `AU`, and `OTHER`/`DE` cross-border policy evaluator), India PAN 4th-character constitution & GSTIN embedded-PAN/state prefix routing, corporate suffix normalization, DBA entity resolution, document expiry (`2026-11-20`), and SQLite duplicate bank account detection.
+- **Stage 3 — Deterministic Cross-Field & Jurisdiction Rule Engine:** Pure Python compliance checks covering completeness, multi-jurisdiction tax/routing formats (`IN`, `US`, `UK`, `AE`, `AU`, and `OTHER`/`DE` cross-border policy evaluator), India PAN 4th-character constitution & GSTIN embedded-PAN/state prefix routing, corporate suffix normalization, DBA entity resolution, document expiry (`2026-11-23`), and SQLite duplicate bank account detection.
 - **Stage 4 — Decision Routing & Outbound Vendor Remediation:** Routes to `APPROVED`, `PENDING`, or `REJECTED`, persists audit logs to SQLite (`backend/vendorguard.db`), and drafts itemized vendor remediation/escalation notices.
 
 ## Quick Start

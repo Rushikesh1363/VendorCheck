@@ -104,7 +104,7 @@ const PRODUCT_ASSUMPTIONS = [
     key: 'deterministic-date-duplicates',
     title: 'Deterministic Date Baseline & Duplicate Screening',
     decision:
-      'Anchors certificate expiry checks to November 20, 2026, and screens historical non-rejected records to block duplicate bank accounts across different entities.',
+      'Anchors certificate expiry checks to November 23, 2026, and screens historical non-rejected records to block duplicate bank accounts across different entities.',
     why: "Keeps expiry testing reproducible and excludes prior Rejected runs so legitimate vendors aren't permanently locked out.",
   },
 ]
@@ -290,7 +290,7 @@ const COMPLIANCE_RULES = [
     name: 'Registration & Certificate Expiry Check',
     category: 'Document Validity',
     checks:
-      'Verifies that Tax Registration and Compliance Certificates are active (not expired, suspended, cancelled, or revoked) and valid on or after the Nov 20, 2026 review date.',
+      'Verifies that Tax Registration and Compliance Certificates are active (not expired, suspended, cancelled, or revoked) and valid on or after the Nov 23, 2026 review date.',
     severity: 'Moderate',
     outcome: 'Pending',
   },

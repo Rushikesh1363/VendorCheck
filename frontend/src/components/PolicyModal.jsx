@@ -80,7 +80,7 @@ export default function PolicyModal({ isOpen, onClose, health }) {
                 <div className="font-semibold text-slate-900 mb-1">3. Deterministic Rule Engine (Pure Python)</div>
                 <p className="text-xs text-slate-600">
                   Zero LLM guessing on compliance checks. Executes exact regex, PAN constitution, GSTIN embedded-PAN &amp; state prefix routing,
-                  corporate suffix normalization, DBA linkage, expiry vs <code className="font-mono">2026-11-20</code>, and SQLite duplicate bank checks.
+                  corporate suffix normalization, DBA linkage, expiry vs <code className="font-mono">2026-11-23</code>, and SQLite duplicate bank checks.
                 </p>
               </div>
               <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
@@ -161,7 +161,7 @@ export default function PolicyModal({ isOpen, onClose, health }) {
               <div className="flex items-start gap-2.5 rounded-lg bg-amber-50/80 border border-amber-200 px-3.5 py-2.5">
                 <AlertTriangle className="h-4 w-4 text-amber-600 shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-amber-900">PENDING:</span> Fixable operational discrepancies (wrong state GSTIN prefix, wrong attachment uploaded instead of bank proof, expired CA/tax certificate prior to <code className="font-mono">2026-11-20</code>, malformed country tax ID, or savings account for a corporate entity).
+                  <span className="font-bold text-amber-900">PENDING:</span> Fixable operational discrepancies (wrong state GSTIN prefix, wrong attachment uploaded instead of bank proof, expired CA/tax certificate prior to <code className="font-mono">2026-11-23</code>, malformed country tax ID, or savings account for a corporate entity).
                 </div>
               </div>
               <div className="flex items-start gap-2.5 rounded-lg bg-rose-50/80 border border-rose-200 px-3.5 py-2.5">
