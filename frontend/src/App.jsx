@@ -146,6 +146,11 @@ export default function App() {
         setHealth(h)
         const loadedPresets = pData.presets || []
         setPresets(loadedPresets)
+        const happyPath =
+          loadedPresets.find((p) => p.id === 'scenario_1') || loadedPresets[0]
+        if (happyPath) {
+          loadPresetIntoForm(happyPath)
+        }
       } catch (err) {
         if (mounted) {
           setErrorMsg(
@@ -209,6 +214,10 @@ export default function App() {
     setErrorMsg(null)
     setElapsedSeconds(0)
     setLiveStatusText('')
+    const happyPath = presets.find((p) => p.id === 'scenario_1') || presets[0]
+    if (happyPath) {
+      loadPresetIntoForm(happyPath)
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
