@@ -37,12 +37,17 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+DEFAULT_ALLOWED_ORIGINS = [
+    "https://vendorcheck-omega.vercel.app",
+    "http://localhost:5173",
+]
 _raw_origins = (os.getenv("ALLOWED_ORIGINS") or "").strip()
-ALLOWED_ORIGINS = (
-    [origin.strip() for origin in _raw_origins.split(",") if origin.strip()]
-    if _raw_origins
-    else ["*"]
-)
+_extra_origins = [
+    origin.strip().rstrip("/")
+    for origin in _raw_origins.split(",")
+    if origin.strip()
+]
+ALLOWED_ORIGINS = list(dict.fromkeys([*DEFAULT_ALLOWED_ORIGINS, *_extra_origins]))
 
 app.add_middleware(
     CORSMiddleware,
