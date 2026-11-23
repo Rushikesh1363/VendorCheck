@@ -253,8 +253,153 @@ function summarizeFailedRuleClause(rule) {
 }
 
 /**
- * Produce clear, natural-language Decision Banner copy listing the actual reasons.
+ * Short 1-line headline for the slim Verdict Header Strip inside Verification Results.
  */
+export function formatVerdictHeadline(result) {
+  if (!result) return ''
+  const failed = (result.rule_checks || []).filter((c) => c.status === 'FAIL')
+  const criticalFails = failed.filter((c) => c.severity === 'CRITICAL')
+  const auditCount = (result.audit_notes || []).length
+
+  if (result.decision === 'APPROVED') {
+    if (auditCount > 0) {
+      return `Vendor Verified · ${pluralize(auditCount, 'Audit Note')} for Review`
+    }
+    return 'All Checks Passed · Ready for ERP'
+  }
+
+  if (result.decision === 'REJECTED') {
+    const count = criticalFails.length || failed.length || 1
+    return `${pluralize(count, 'Critical Issue')} Blocking Approval`
+  }
+
+  const count = failed.length || 1
+  return `${pluralize(count, 'Issue')} Requiring Vendor Clarification`
+}
+
+/**
+ * Compact issue representation for Verification Results rows.
+ * Returns { title, isPair, submitted, found, reason } where `isPair: true`
+ * renders a tight 2-column "Submitted vs. Found in Document" strip, and
+ * `isPair: false` renders a single concise 1-line reason.
+ */
+export function formatCompactIssueRow(rule, formData = null) {
+  const rid = rule.rule_id || ''
+  const base = formatRuleForOperator(rule)
+
+  if (rid === 'R2_IN_PAN_CONSTITUTION') {
+    const constitution = formData?.entity_constitution || base.leftValue
+    const pan = (formData?.tax_id || '').trim().toUpperCase()
+    const foundClean = sanitizeOperatorText(rule.found)
+      .replace(/^4th Char\s*'([A-Z])'\s*\(([^)]+)\)\s*in PAN\s*([A-Z0-9]+)/i, '$3 ($2)')
+    return {
+      title: 'PAN Type Mismatch',
+      isPair: true,
+      submitted: constitution,
+      found: foundClean || (pan ? `${pan} (Mismatched type)` : base.rightValue),
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R3_CRITICAL_FRAUD_MISMATCH') {
+    return {
+      title: 'Bank Beneficiary Mismatch',
+      isPair: true,
+      submitted: formData?.legal_entity_name || base.leftValue,
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R2_IN_GSTIN_STATE') {
+    return {
+      title: 'GSTIN State Mismatch',
+      isPair: true,
+      submitted: base.leftValue,
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R2_IN_GSTIN_PAN_LINK') {
+    return {
+      title: 'GSTIN & PAN Mismatch',
+      isPair: true,
+      submitted: formData?.tax_id || base.leftValue,
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R2_TAX_DOC_CROSSMATCH') {
+    return {
+      title: 'Tax ID Mismatch',
+      isPair: true,
+      submitted: base.leftValue,
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R3_BANK_COORDS_MATCH') {
+    return {
+      title: 'Bank Account / Routing Mismatch',
+      isPair: true,
+      submitted: base.leftValue,
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R3_CORP_ACCOUNT_TYPE') {
+    return {
+      title: 'Personal Bank Account Used',
+      isPair: true,
+      submitted: formData?.entity_constitution || 'Corporate Entity',
+      found: base.rightValue,
+      reason: base.message,
+    }
+  }
+
+  // Non-1:1 issues (expired cert, wrong/missing doc, format error, duplicate, warnings)
+  if (rid === 'R4_DOCUMENT_VALIDITY') {
+    return {
+      title: base.title,
+      isPair: false,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R1_BANK_DOC_TYPE') {
+    return {
+      title: base.title,
+      isPair: false,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R2_CROSS_BORDER_POLICY') {
+    return {
+      title: 'Cross-Border Tax ID Mismatch',
+      isPair: false,
+      reason: base.message,
+    }
+  }
+
+  if (rid === 'R3_BENEFICIARY_MATCH' && rule.status === 'WARN') {
+    return {
+      title: 'Bank Ownership Check Deferred',
+      isPair: false,
+      reason: 'Paused until a valid bank verification letter or cancelled cheque is uploaded.',
+    }
+  }
+
+  return {
+    title: base.title,
+    isPair: false,
+    reason: base.message,
+  }
+}
 export function formatExecutiveSummary(result) {
   if (!result) return ''
   const failed = (result.rule_checks || []).filter((c) => c.status === 'FAIL')
