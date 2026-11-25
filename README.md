@@ -2,8 +2,6 @@
 **Automated multi-jurisdiction vendor onboarding and compliance verification** using hybrid multimodal OCR, a deterministic Python rule engine, and human-in-the-loop (HITL) exception routing.
 
 🔗 **[Live App](https://vendorcheck-omega.vercel.app)** *(Note: Backend runs on Render's free tier—first request may take ~30–45s to wake up)*  
-🎥 **[90-Second Demo Walkthrough](#)** *(Add Loom link here)*
-
 ---
 
 ## 1. The Problem Statement
